@@ -1,8 +1,34 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿
+
+@{
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<h4>QRCodeModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Index">
+            <div class="form-group">
+                <label  class="control-label"></label>
+                <input name=text class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a href="@ViewData["QR"]" class="btn btn-success" download="QRCode.png">Download</a>
+            </div>
+            <div class="form-group">
+                <img src="@ViewData["QR"]"  class="img-thumbnail"/>
+               
+            </div>
+
+        </form>
+    </div>
 </div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

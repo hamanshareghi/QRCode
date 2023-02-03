@@ -1,32 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
 using QRCode.Models;
-using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using QRCode.Helper.QRCodeGenerator;
 
 namespace QRCode.Controllers
 {
+   
+   
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private IQRCodeGeneratorHelper _codeGenerator;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IQRCodeGeneratorHelper codeGenerator)
         {
-            _logger = logger;
+            _codeGenerator = codeGenerator;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Index(string text)
         {
-            return View();
-        }
+            if (string.IsNullOrEmpty(text))
+            {
+                return BadRequest();
+            }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            byte[] QRCodeAsBytes = _codeGenerator.GenerateQRCode(text);
+            string QRCodeAsImageBase64 =
+                $"data:image/png;base64,{Convert.ToBase64String(QRCodeAsBytes)}";
+
+            //QRCodeModel model = new QRCodeModel
+            //{
+            //    QRCodeText = QRCodeAsImageBase64
+            //};
+
+            ViewData["QR"] = QRCodeAsImageBase64;
+            return View();
         }
     }
 }
